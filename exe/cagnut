@@ -1,0 +1,23 @@
+#!/usr/bin/env ruby
+
+lib = File.expand_path('../../lib', __FILE__)
+$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
+
+require 'thor'
+require 'optparse'
+require "cagnut"
+require "cagnut/cli/new_project"
+require "cagnut/cli/pipeline"
+
+method = ARGV.first
+case method
+when 'new', 'copy_params'
+  Cagnut::NewProject.start(ARGV)
+when 'pipeline'
+  Cagnut::Pipeline::Base.new.start(ARGV)
+else
+  puts <<-USAGE.strip_heredoc
+    cagnut new <folder_name>  create new project folder
+    cagnut pipeline           pipeline relative
+  USAGE
+end

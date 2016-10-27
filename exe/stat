@@ -1,0 +1,79 @@
+#!/usr/bin/env ruby
+require 'json'
+require 'time'
+
+dirs = ARGV
+
+if dirs.nil?
+  puts 'Please give *.std Working Directory'
+  exit
+end
+
+def file_name dir, file
+  %r{#{dir}\/(.+).[s][t][d]}.match(file)[1]
+end
+
+def check_resource line
+  case line
+  when 'Resource usage summary:'
+    @is_resource = true
+  when 'The output (if any) is above this job summary.'
+    @is_resource = false
+  end
+end
+
+def job_complete? line
+  @complete = true if line == 'Successfully completed.'
+end
+
+def cal_spend_time line
+  @started = fetch_time line, 'Started at ' if @started.nil?
+  @ended = fetch_time line, 'Results reported ' if @ended.nil?
+end
+
+def fetch_time line, marked
+  Time.parse(line.match(/#{marked}(.*+)/)[1]) if line.match(/#{marked}/)
+end
+
+def time_diff
+  Time.at(@ended - @started).utc.strftime '%H:%M:%S'
+end
+
+def check_content line
+  job_complete? line
+  check_resource line
+end
+
+def clasp_time
+  @complete ? time_diff : 'failed'
+end
+
+def reset_variable
+  @started = nil
+  @ended = nil
+  @complete = false
+  @is_resource = false
+end
+
+def parse_std file
+  resource_hash = {}
+  reset_variable
+  File.open(file).each_line do |line|
+    check_content line.chomp!
+    cal_spend_time line if @started.nil? || @ended.nil?
+    resource_hash['time'] = clasp_time
+    next unless line.length > 0 && @complete && @is_resource
+    data = line.gsub(/\s\s+/, '').split(':')
+    resource_hash[data[0]] = data[1] unless data[1].nil?
+  end
+  resource_hash
+end
+
+dirs.each do |dir|
+  stat = []
+  Dir.glob("#{dir}/*.std").each do |file|
+    resource_hash = parse_std file
+    stat << [file_name(dir, file), resource_hash]
+  end
+  puts stat.to_json.inspect
+end

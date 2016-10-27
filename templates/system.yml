@@ -1,0 +1,48 @@
+###### ACTGUN Configuration
+cagnut:
+  #project_dir is used as the data output location
+  output_data_dir: '/home/u00wsg00/work3/data/'
+
+tools:
+  bwa: '/home/u00wsg00/prg/bwa/bwa-0.7.12/bwa'
+  samtools: '/home/u00wsg00/prg/samtools/samtools/bin/samtools'
+  gatk: '/home/u00wsg00/prg/gatk/3.4.0/GenomeAnalysisTK.jar'
+  picard: '/home/u00wsg00/prg/picard/picard/dist/picard.jar'
+  java: '/pkg/java/jre/bin/java'
+  R: '/home/u00wsg00/prg/R/R-3.2.1/bin/R'
+  snpeff: '/home/u00wsg00/prg/snpeff/snpEff/snpEff.jar'
+
+refs:
+  ref_fasta: '/home/u00wsg00/work3/ref/hg19/hg19.fasta'
+  # targets_file: '/home/u00wsg00/work3/ref/source/TruSeq_exome_targeted_regions_hg19_chr.bed'
+  # target_flanks_file: '/home/u00wsg00/work3/ref/hg19/targetregion100_hg19_nimblegen_exome_v2.interval_list'
+  dbsnp:
+    ref: '/home/u00wsg00/work3/ref/source/Mills_and_1000G_gold_standard.indels.hg19.sites.vcf'
+    indels: '/home/u00wsg00/work3/ref/source/Mills_and_1000G_gold_standard.indels.hg19.sites.vcf'
+    version: '135'
+  snpeff:
+    config: '/home/u00wsg00/prg/snpeff/snpEff/snpEff.config'
+    db: 'hg19'
+
+####### Sample Infomation
+
+# rgid is "read group id" used by bwa and picard
+# PU:barcode. PU is required by Picard. If not multiplexing sequencing put something like "NA" or "lane1"..
+# PATH for RAW Data Directories
+samples:
+  -
+    name: F193
+    rgid: Project_F193
+    pu: 'NA'
+    path: '/home/u00wsg00/work3/sample/fastq/'
+
+#DATA_TYPE= (TILESQSEQ | TILESFASTQ | TILESELAND | ONEFASTQ | ONEFASTQSE) Single-End
+#TARGET_COVERAGE= (AGILENT | NIMBLEGEN)
+info:
+  data_type: "TILESFASTQ"
+  target_coverage: "NIMBLEGEN"
+  pl: 'ILLumina'
+  lb: "nimblegen"
+  cn: "CPD"
+  ds: "2x100"
+  dt: "2015-11-06"

@@ -1,7 +1,7 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'cagnut_core/version'
+require 'cagnut/version'
 
 Gem::Specification.new do |spec|
   spec.name          = "cagnut_core"
@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
 
   spec.summary       = %q{Computational and Analytical Gear for Nucleic acid Utilitarian Techniques}
   spec.description   = %q{Computational and Analytical Gear for Nucleic acid Utilitarian Techniques}
-  spec.homepage      = "https://github.com/cagnut/cagnut-core"
+  spec.homepage      = "https://github.com/CAGNUT/cagnut_core"
   spec.license       = "MIT"
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
