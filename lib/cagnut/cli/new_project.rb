@@ -28,6 +28,7 @@ module Cagnut
       empty_directory name
       copy_file 'Gemfile', "#{name}/Gemfile"
       inside name, verbose: true do
+        create_file '.ruby-version', '2.3.1'
         append_to_file 'Gemfile', "gem 'cagnut_cluster'\n" if options[:cluster]
         append_pipeline_gems_to_gemfile options[:pipelines]
         bundle 'install'
