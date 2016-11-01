@@ -20,11 +20,11 @@ module Cagnut
         run_filter options[:run] if options[:run]
         config_name = get_config_name options[:run]
         config = Cagnut.load_config config_name, options
-        config['dodebug'] = options[:dodebug]
+        config['dodebug'] = options[:debug]
         config['samples'].each do |sample|
           config['sample'] = sample
           run_pipeline options[:run] if options[:run]
-          execute_command config, sample unless options[:dodebug]
+          execute_command config, sample unless options[:debug]
         end
       end
 
@@ -64,14 +64,14 @@ module Cagnut
       def pepeline_opts options = {}
         OptionParser.new do |opts|
           opts.banner = 'Usage: example.rb [options]'
-          opts.on('-d', '--dodebug', 'Dodebug') do
-            options[:dodebug] = true
+          opts.on('-d', '--debug', 'Dodebug') do
+            options[:debug] = true
           end
           opts.on('-c', '--config yaml', 'Cagnut Config YAML') do |c|
             options[:config] = c
           end
-          opts.on('-n', '--not_check_tools', 'Not Check Tools') do
-            options[:not_check] = true
+          opts.on('-n', '--no_check_tools', 'Not Check Tools') do
+            options[:no_check] = true
           end
           opts.on('-r', '--run draw1,draw2,draw3 or xyz', Array, 'run: draw1,draw2,draw3 or xyz') do |r|
             options[:run] = r
@@ -80,7 +80,10 @@ module Cagnut
             options[:params] = p
           end
           opts.on('-l', '--list', 'Pipeline List') do
-            puts "\s\s#{self.class.pipelines.map(&:pipeline_name).join("\n\s\s")}"
+            list = self.class.pipelines.map do |pipeline|
+              pipeline.try(:pipeline_names) || pipeline.try(:pipeline_name)
+            end
+            puts "\s\s#{list.join("\n\s\s")}"
           end
           opts.on('-h', '--help', 'Help') do
             puts "Help"
