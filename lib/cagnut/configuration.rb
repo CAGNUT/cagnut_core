@@ -28,7 +28,7 @@ module Cagnut
       def load_config config_name, options
         @config ||= check_and_load_yml fetch_system_config_path(options[:config])
         @params ||= check_and_load_yml fetch_tools_config_path(config_name, options[:params])
-        config_check config_name, options[:not_check]
+        config_check config_name, options[:no_check]
       end
 
       private
