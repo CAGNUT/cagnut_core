@@ -28,6 +28,8 @@ module Cagnut
         end
       end
 
+      private
+
       def get_config_name pipeline_names
         abort 'Did not assign pipeline to run' if pipeline_names.blank?
         selected = self.class.pipelines.find do |p|
