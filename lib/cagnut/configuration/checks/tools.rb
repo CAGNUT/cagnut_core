@@ -20,11 +20,15 @@ module Cagnut
           tools = @config['tools']
           refs = @config['refs']
           puts 'Start Checking...'
-          check_queueing_system @config['queueing_system']
+          check_execute_system
           check_ref_fasta refs['ref_fasta']
           check_java tools['java']
           check_r tools['R']
           check_tool tools, refs
+        end
+
+        def check_execute_system
+          puts "Using Local System"
         end
 
         def check_tool tools_path, refs=nil
@@ -32,8 +36,8 @@ module Cagnut
 
         def check_tool_ver tool
           ver = yield if block_given?
-          @check_completed = false if ver.nil?
-          ver = ver.nil? ? 'Not Found' : ver.chomp!
+          @check_completed = false if ver.blank?
+          ver = ver.blank? ? 'Not Found' : ver.chomp!
           puts "Using #{tool} (#{ver})"
         end
 
@@ -57,11 +61,6 @@ module Cagnut
               `#{r_path}script -e 'packageVersion("#{lib}")' | cut -f2 -d ' '`
             end
           end
-        end
-
-        def check_queueing_system queueing_system
-          system = queueing_system.nil? ? 'Local' : queueing_system['system']
-          puts "Using Queueing System: #{system}"
         end
 
         def check_ref_fasta ref_path
