@@ -23,12 +23,11 @@ module Cagnut
     end
 
     def full_command job_script, job_name, opts
-      super if defined?(super)
-      return unless local_run?
-      command = local job_script
+      return super if defined?(super) && !run_local?
+      local job_script
     end
 
-    def local_run?
+    def run_local?
       cluster.blank? || cluster['system'] == 'Local'
     end
 
@@ -50,13 +49,13 @@ module Cagnut
     end
 
     def run_local
-      return unless local_run?
+      return unless run_local?
       %(& echo $! >> #{jobs_dir}/submit_job_#{sample_name}.ids
         wait $!)
     end
 
     def wait_local
-      return unless local_run?
+      return unless run_local?
       'wait $!'
     end
   end
