@@ -25,6 +25,7 @@ module Cagnut
     private
 
     def new_project name, options
+      check_pipeline options[:pipelines]
       empty_directory name
       copy_file 'Gemfile', "#{name}/Gemfile"
       inside name, verbose: true do
@@ -38,6 +39,10 @@ module Cagnut
       after_new_project name
       generate_pipeline_tools_config name, options[:pipelines], options[:cluster]
       append_pipeline_dependency_gems_to_gemfile name, options[:pipelines]
+    end
+
+    def check_pipeline pipelines
+      abort('Please select at least one pipeline.') if pipelines.blank?
     end
 
     def add_queue_setting name, pipeline
@@ -57,6 +62,7 @@ module Cagnut
     end
 
     def append_pipeline_dependency_gems_to_gemfile folder, pipelines
+      return if pipelines.blank?
       inside folder, verbose: true do
         pipelines.each do |pipeline_name|
           gems = send "#{pipeline_name}_pipeline_dependency_gems"
