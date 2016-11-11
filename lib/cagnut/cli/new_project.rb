@@ -37,6 +37,7 @@ module Cagnut
       load_bundle_env name
       after_new_project name
       generate_pipeline_tools_config name, options[:pipelines], options[:cluster]
+      append_pipeline_dependency_gems_to_gemfile name, options[:pipelines]
     end
 
     def add_queue_setting name, pipeline
@@ -52,6 +53,16 @@ module Cagnut
       return if pipelines.blank?
       pipelines.each do |pipeline_name|
         append_to_file 'Gemfile', "gem 'cagnut_pipeline_#{pipeline_name}'\n"
+      end
+    end
+
+    def append_pipeline_dependency_gems_to_gemfile folder, pipelines
+      inside folder, verbose: true do
+        pipelines.each do |pipeline_name|
+          gems = send "#{pipeline_name}_pipeline_dependency_gems"
+          gems.each { |gem_name| append_to_file 'Gemfile', "gem #{gem_name}\n" }
+        end
+        bundle 'update'
       end
     end
 
