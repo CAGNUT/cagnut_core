@@ -74,8 +74,10 @@ module Cagnut
         def ln_seq_txt_file sample, qseq_dir
           files =
             Dir.glob("#{sample['path']}/*_sequence.txt*") + Dir.glob("#{sample['path']}/*_qseq.txt*")
-          files.each do |f|
-            `ln -s #{f} #{qseq_dir} 2>/dev/null` if f.match sample['name']
+          check_file_size files
+          files.each do |file|
+            next unless file.match sample['name']
+            `ln -s #{file} #{qseq_dir} 2>/dev/null`
           end
         end
 
@@ -86,16 +88,24 @@ module Cagnut
         end
 
         def ln_fastq_file sample, flist, fastq_dir
+          check_file_size flist
           if %w(ONEFASTQ ONEFASTQSE).include? @config['info']['data_type']
             files_to_much? flist
             file_type = link_name flist, sample['name']
             seq_file = "#{fastq_dir}/#{file_type}"
             `ln -s #{flist[0]} #{seq_file} 2>/dev/null` if flist[0].match sample['name']
           else
-            flist.each do |f|
-              next unless f.match sample['name']
+            flist.each do |file|
+              next unless file.match sample['name']
               `ln -s #{f} #{fastq_dir} 2>/dev/null`
             end
+          end
+        end
+
+        def check_file_size flist, previous_size=0
+          flist.each do |file|
+            file_size = File.size(file)
+            abort "#{file} is empty." unless file_size > 0
           end
         end
 
