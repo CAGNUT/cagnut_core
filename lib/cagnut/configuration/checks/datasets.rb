@@ -97,7 +97,7 @@ module Cagnut
           else
             flist.each do |file|
               next unless file.match sample['name']
-              `ln -s #{f} #{fastq_dir} 2>/dev/null`
+              `ln -s #{file} #{fastq_dir} 2>/dev/null`
             end
           end
         end
